@@ -1,6 +1,9 @@
+-- main
 local repl = game.ReplicatedStorage
-local ls = game.Players.LocalPlayer.leaderstats
+local pl = game.Players.LocalPlayer
+local ls = pl.leaderstats
 local re = game.ReplicatedStorage.Remotes.ClientRemote
+local nx
 
 local scr = {}
 for i,v in next,repl.Modules:GetChildren() do
@@ -25,6 +28,23 @@ function get(k,r,f,c)
     end; return table.find(scr[k],l)
 end
 
+local tr = game.Players.LocalPlayer.PlayerGui.Ui.CenterFrame.Travel.Frame
+function has()
+    local tbl = {}
+    for i,v in next, tr:GetChildren() do
+        if not v:FindFirstChild('Purchase') then continue end
+        tbl[v.Name] = v.Purchase.Texto.Text == 'Travel'
+    end; return tbl
+end
+
+local pr
+for i,v in next, game.Workspace["__SETTINGS"]["__INTERACT"]:GetChildren() do
+    if v.Name == 'Practice' then
+        pr = (not pr and v) or ((has()[v.Area.Value] and (v.Boost.Value > pr.Boost.Value)) and v) or pr
+    end
+end
+
+-- gui
 local ui = loadstring(game:HttpGet('https://raw.githubusercontent.com/loglizzy/Elerium-lib/main/lib.min.lua'))()
 local win,flag = ui:AddWindow('8====D anime cum'),{}
 
@@ -51,8 +71,15 @@ local features = {
         },
         {
             'auto practice','practice',
-            function(v)
-                print(v)
+            function()
+                local e = ls.Gems
+                while flag.practice do
+                    if nx and e.Value > nx then continue end
+                    local r = pl.Character and pl.Character.PrimaryPart
+                    r.CFrame = pr.CFrame
+                    nx = re:InvokeServer('Practice',pr)*1.05
+                    task.wait()
+                end
             end
         }
     }
