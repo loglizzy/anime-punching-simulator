@@ -1,5 +1,4 @@
-# anime-punching-simulator
-really optimized
+really optimized script
 
 # features
 * farm
