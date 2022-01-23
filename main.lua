@@ -74,7 +74,7 @@ local features = {
             function()
                 local e = ls.Gems
                 while flag.practice do
-                    if nx and e.Value > nx then continue end
+                    if nx and e.Value < nx then task.wait() continue end
                     local r = pl.Character and pl.Character.PrimaryPart
                     r.CFrame = pr.CFrame
                     nx = re:InvokeServer('Practice',pr)*1.05
