@@ -40,72 +40,85 @@ end
 
 -- gui
 local ui = loadstring(game:HttpGet('https://raw.githubusercontent.com/loglizzy/Elerium-lib/main/lib.min.lua'))()
-local win,flag = ui:AddWindow('8====D anime cum'),{}
+local win,flag = ui:AddWindow('8====D anime cum',{
+	main_color = Color3.fromRGB(50, 50, 50),
+	min_size = Vector2.new(260, 170),
+	toggle_key = Enum.KeyCode.RightShift,
+	can_resize = true,
+}),{}
 
 local features = {
-    farm = {
+    {
+        'farm',
         {
-            'auto energy','energy',
-            function()
-                while flag.energy do
-                    re:InvokeServer('Tapping')
-                    task.wait()
+            {
+                'auto energy','energy',
+                function()
+                    while flag.energy do
+                        re:InvokeServer('Tapping')
+                        task.wait()
+                    end
                 end
-            end
-        },
-        {
-            'auto rebirth','rebirth',
-            function()
-                local e = ls.Energy
-                while flag.rebirth do
-                    re:InvokeServer('Rebirths',get('Rebirths',e.Value,'Cost'))
-                    task.wait()
-                end
-            end,
-        },
-        {
-            'auto practice','practice',
-            function()
-                local e = ls.Gems
-                while flag.practice do
-                    if nx and e.Value < nx then task.wait() continue end
-                    local r = pl.Character and pl.Character.PrimaryPart
-                    if not r then task.wait() continue end
-                    
-                    local pr
-                    for i,v in next, game.Workspace["__SETTINGS"]["__INTERACT"]:GetChildren() do
-                        if v.Name == 'Practice' then
-                            pr = (not pr and v) or ((has()[v.Area.Value] and (v.Boost.Value > pr.Boost.Value)) and v) or pr
+            },
+            {
+                'auto rebirth','rebirth',
+                function()
+                    local e = ls.Energy
+                    while flag.rebirth do
+                        re:InvokeServer('Rebirths',get('Rebirths',e.Value,'Cost'))
+                        task.wait()
+                    end
+                end,
+            },
+            {
+                'auto practice','practice',
+                function()
+                    local e = ls.Gems
+                    while flag.practice do
+                        if nx and e.Value < nx then task.wait() continue end
+                        local r = pl.Character and pl.Character.PrimaryPart
+                        if not r then task.wait() continue end
+                        
+                        local pr
+                        for i,v in next, game.Workspace["__SETTINGS"]["__INTERACT"]:GetChildren() do
+                            if v.Name == 'Practice' then
+                                pr = (not pr and v) or ((has()[v.Area.Value] and (v.Boost.Value > pr.Boost.Value)) and v) or pr
+                            end
                         end
+                        
+                        r.CFrame = pr.CFrame
+                        nx = (re:InvokeServer('Practice',pr) or 0)*1.05
+                        task.wait()
                     end
-                    
-                    r.CFrame = pr.CFrame
-                    nx = (re:InvokeServer('Practice',pr) or 0)*1.05
-                    task.wait()
                 end
-            end
-        },
+            },
+        }
+    },
+    {
+        'misc',
         {
-            'auto buy worlds','worlds',
-            function()
-                local e = ls.Gems
-                while flag.worlds do
-                    local x = get('Areas',e.Value,'Cost')
-                    if not has()[x] then
-                        re:InvokeServer('Areas',x)
+            {
+                'auto buy worlds','worlds',
+                function()
+                    local e = ls.Gems
+                    while flag.worlds do
+                        local x = get('Areas',e.Value,'Cost')
+                        if not has()[x] then
+                            re:InvokeServer('Areas',x)
+                        end
+                        task.wait()
                     end
-                    task.wait()
                 end
-            end
+            }
         }
     }
 }
 
 local first
-for i,r in next,features do
-    local p = win:AddTab(i)
+for i,v in next,features do
+    local p = win:AddTab(v[1])
     first = first or p
-    for _,v in next, r do
+    for _,v in next, v[2] do
         p:AddSwitch(v[1],function(f)
             flag[v[2]] = f; v[3](f)
         end)
