@@ -38,13 +38,6 @@ function has()
     end; return tbl
 end
 
-local pr
-for i,v in next, game.Workspace["__SETTINGS"]["__INTERACT"]:GetChildren() do
-    if v.Name == 'Practice' then
-        pr = (not pr and v) or ((has()[v.Area.Value] and (v.Boost.Value > pr.Boost.Value)) and v) or pr
-    end
-end
-
 -- gui
 local ui = loadstring(game:HttpGet('https://raw.githubusercontent.com/loglizzy/Elerium-lib/main/lib.min.lua'))()
 local win,flag = ui:AddWindow('8====D anime cum'),{}
@@ -77,8 +70,17 @@ local features = {
                 while flag.practice do
                     if nx and e.Value < nx then task.wait() continue end
                     local r = pl.Character and pl.Character.PrimaryPart
+                    if not r then task.wait() continue end
+                    
+                    local pr
+                    for i,v in next, game.Workspace["__SETTINGS"]["__INTERACT"]:GetChildren() do
+                        if v.Name == 'Practice' then
+                            pr = (not pr and v) or ((has()[v.Area.Value] and (v.Boost.Value > pr.Boost.Value)) and v) or pr
+                        end
+                    end
+                    
                     r.CFrame = pr.CFrame
-                    nx = re:InvokeServer('Practice',pr)*1.05
+                    nx = (re:InvokeServer('Practice',pr) or 0)*1.05
                     task.wait()
                 end
             end
