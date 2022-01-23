@@ -20,12 +20,13 @@ for i,v in next,scr do
     end); mods[i] = tbl
 end
 
-function get(k,r,f,c)
+function get(k,f,c)
     local l,x
     for i,v in next,mods[k] do
-        l = (not f and (not l and v)) or ((not f or v[c] <= f) and (not l or v[r] > l[r]) and v) or l
+        l = (v[c] <= f and v) or l
         x = (l == v and i) or x
-    end; return table.find(scr[k],l)
+        if l and x then break end
+    end; return table.find(scr[k],l) or x
 end
 
 local tr = game.Players.LocalPlayer.PlayerGui.Ui.CenterFrame.Travel.Frame
@@ -64,7 +65,7 @@ local features = {
             function()
                 local e = ls.Energy
                 while flag.rebirth do
-                    re:InvokeServer('Rebirths',get('Rebirths','Amount',e.Value,'Cost'))
+                    re:InvokeServer('Rebirths',get('Rebirths',e.Value,'Cost'))
                     task.wait()
                 end
             end,
@@ -78,6 +79,19 @@ local features = {
                     local r = pl.Character and pl.Character.PrimaryPart
                     r.CFrame = pr.CFrame
                     nx = re:InvokeServer('Practice',pr)*1.05
+                    task.wait()
+                end
+            end
+        },
+        {
+            'auto buy worlds','worlds',
+            function()
+                local e = ls.Gems
+                while flag.worlds do
+                    local x = get('Areas',e.Value,'Cost')
+                    if not has()[x] then
+                        re:InvokeServer('Areas',x)
+                    end
                     task.wait()
                 end
             end
