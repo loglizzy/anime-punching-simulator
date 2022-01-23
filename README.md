@@ -6,3 +6,4 @@ each feature is fully automated, you just need to let it run
 	* auto energy
 	* auto rebirth
 	* auto practice
+	* auto buy worlds
